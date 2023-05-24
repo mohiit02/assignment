@@ -1,0 +1,73 @@
+name: Module-specific Docker installation, testing, and linting
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: |
+          cd moduleA
+          python -m venv env
+          source env/bin/activate
+          pip install -r requirements.txt
+          deactivate
+
+          cd ../moduleB
+          python -m venv env
+          source env/bin/activate
+          pip install -r requirements.txt
+          deactivate
+
+          cd ../moduleC
+          python -m venv env
+          source env/bin/activate
+          pip install -r requirements.txt
+          deactivate
+
+      - name: Run tests
+        run: |
+          cd moduleA
+          source env/bin/activate
+          pytest
+          deactivate
+
+          cd ../moduleB
+          source env/bin/activate
+          pytest
+          deactivate
+
+          cd ../moduleC
+          source env/bin/activate
+          pytest
+          deactivate
+
+      - name: Run linting
+        run: |
+          cd moduleA
+          source env/bin/activate
+          pylint .
+          deactivate
+
+          cd ../moduleB
+          source env/bin/activate
+          pylint .
+          deactivate
+
+          cd ../moduleC
+          source env/bin/activate
+          pylint .
+          deactivate
